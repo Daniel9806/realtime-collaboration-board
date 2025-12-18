@@ -122,4 +122,34 @@ describe("realtimeController socket integration", () => {
     __testing.triggerServer("server:error", { message: "boom" });
     expect(session.lastError).toBe("boom");
   });
+
+  it("sets connected=false on disconnect", async () => {
+    const session = useSessionStore();
+    session.setUserName("Ana");
+
+    const { startRealtime } = await import("@/services/realtime/realtimeController");
+    const socketModule = (await import("@/services/socket/SocketGateway")) as any;
+    const __testing = socketModule.__testing;
+
+    startRealtime();
+
+    __testing.triggerSocket("connect");
+    expect(session.connected).toBe(true);
+
+    __testing.triggerSocket("disconnect");
+    expect(session.connected).toBe(false);
+  });
+
+  it("stopRealtime removes registered server handlers", async () => {
+    const { startRealtime, stopRealtime } = await import("@/services/realtime/realtimeController");
+    const socketModule = (await import("@/services/socket/SocketGateway")) as any;
+    const __testing = socketModule.__testing;
+
+    startRealtime();
+    stopRealtime();
+
+    expect(() => __testing.triggerServer("board:data", { notes: [] })).toThrow(
+      /No handler registered for server event: board:data/
+    );
+  });
 });

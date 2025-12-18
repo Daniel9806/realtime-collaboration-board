@@ -89,7 +89,7 @@ describe("realtimeController socket integration", () => {
     __testing.triggerSocket("connect");
 
     expect(socketGateway.emit).toHaveBeenCalledWith("user:join", { name: "Ana" });
-    expect(socketGateway.emit).toHaveBeenCalledWith("board:init", undefined);
+    expect(socketGateway.emit).toHaveBeenCalledWith("board:init");
 
     __testing.triggerServer("presence:users", { users: [{ name: "Ana" }, { name: "Carlos" }] });
     expect(users.onlineUsers).toEqual(["Ana", "Carlos"]);

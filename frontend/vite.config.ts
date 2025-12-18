@@ -19,6 +19,14 @@ export default defineConfig({
       "**/cypress/**",
       "**/.{idea,git,cache,output,temp}/**",
       "src/**/__tests__/**"
-    ]
+    ],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "lcov"],
+      lines: 70,
+      functions: 70,
+      branches: 70,
+      statements: 70
+    }
   }
 } as any);

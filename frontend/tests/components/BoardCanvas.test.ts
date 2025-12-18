@@ -1,17 +1,20 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { nextTick } from "vue";
 import BoardCanvas from "@/components/BoardCanvas.vue";
 import { useNotesStore } from "@/stores/notes";
 import type { Note } from "@/types/realtime";
 
 describe("BoardCanvas", () => {
+  let pinia: ReturnType<typeof createPinia>;
+
   beforeEach(() => {
-    const pinia = createPinia();
+    pinia = createPinia();
     setActivePinia(pinia);
   });
 
-  it("renders one NoteCard per note in the store", () => {
+  it("renders one NoteCard per note in the store", async () => {
     const notes = useNotesStore();
 
     const n1: Note = {
@@ -38,7 +41,7 @@ describe("BoardCanvas", () => {
 
     const wrapper = mount(BoardCanvas, {
       global: {
-        plugins: [createPinia()],
+        plugins: [pinia],
         stubs: {
           NoteCard: {
             props: ["noteId"],
@@ -47,6 +50,8 @@ describe("BoardCanvas", () => {
         }
       }
     });
+
+    await nextTick();
 
     const stubs = wrapper.findAll(".note-card-stub");
     expect(stubs).toHaveLength(2);

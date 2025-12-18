@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { nextTick } from "vue";
 import NoteCard from "@/components/NoteCard.vue";
 import { useNotesStore } from "@/stores/notes";
 import { useSessionStore } from "@/stores/session";
@@ -18,8 +19,10 @@ vi.mock("@/services/realtime/realtimeApi", () => {
 });
 
 describe("NoteCard", () => {
+  let pinia: ReturnType<typeof createPinia>;
+
   beforeEach(() => {
-    const pinia = createPinia();
+    pinia = createPinia();
     setActivePinia(pinia);
   });
 
@@ -52,14 +55,17 @@ describe("NoteCard", () => {
     const wrapper = mount(NoteCard, {
       props: { noteId: "n1" },
       global: {
-        plugins: [createPinia()]
+        plugins: [pinia]
       }
     });
+
+    await nextTick();
 
     const titleInput = wrapper.find("input");
     await titleInput.setValue("New title");
 
     vi.advanceTimersByTime(300);
+    await nextTick();
 
     expect(realtimeApi.updateNote).toHaveBeenCalled();
     const lastCall = (realtimeApi.updateNote as unknown as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0];
@@ -92,9 +98,11 @@ describe("NoteCard", () => {
     const wrapper = mount(NoteCard, {
       props: { noteId: "n1" },
       global: {
-        plugins: [createPinia()]
+        plugins: [pinia]
       }
     });
+
+    await nextTick();
 
     const commentInput = wrapper.find("input[placeholder='Escribir comentario...']");
     await commentInput.setValue("  Hola  ");

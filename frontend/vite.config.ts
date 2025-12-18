@@ -11,6 +11,14 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    globals: true
+    globals: true,
+    include: ["tests/**/*.test.{ts,tsx,js,jsx}"],
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/cypress/**",
+      "**/.{idea,git,cache,output,temp}/**",
+      "src/**/__tests__/**"
+    ]
   }
-});
+} as any);

@@ -14,6 +14,8 @@
         </div>
 
         <input
+          name="noteTitle"
+          autocomplete="off"
           v-model="draftTitle"
           class="min-w-0 flex-1 bg-transparent text-sm font-semibold text-zinc-100 outline-none"
           @focus="setEditing(true)"

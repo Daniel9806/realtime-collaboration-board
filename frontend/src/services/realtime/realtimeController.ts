@@ -3,7 +3,8 @@ import { useNotesStore } from "@/stores/notes";
 import { useUsersStore } from "@/stores/users";
 import { useSessionStore } from "@/stores/session";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin;
+// const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin;
+const SOCKET_URL = "http://localhost:3001";
 
 let started = false;
 let cleanup: Array<() => void> = [];

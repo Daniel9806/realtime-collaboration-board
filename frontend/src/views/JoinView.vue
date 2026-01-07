@@ -5,6 +5,11 @@
     <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
       <label class="mb-2 block text-sm text-zinc-300">Tu nombre</label>
       <input
+        name="userName"
+        autocomplete="username"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
         v-model="name"
         class="w-full rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-zinc-100 outline-none focus:border-zinc-600"
         placeholder="Ej: Carlos"

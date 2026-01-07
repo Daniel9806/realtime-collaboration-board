@@ -3,7 +3,7 @@ import { useNotesStore } from "@/stores/notes";
 import { useUsersStore } from "@/stores/users";
 import { useSessionStore } from "@/stores/session";
 
-const SOCKET_URL = "http://localhost:3001";
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin;
 
 let started = false;
 let cleanup: Array<() => void> = [];
@@ -73,6 +73,8 @@ export function startRealtime() {
       socketGateway.emit("board:init");
     }
   };
+
+  //TODO: Revisar pq se desuscribe y vuelve a suscribirse a connect
   socket.off("connect", onConnect);
   socket.on("connect", onConnect);
   cleanup.push(() => socket.off("connect", onConnect));

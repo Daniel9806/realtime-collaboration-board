@@ -3,7 +3,8 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { state } from "./data.js";
 
-const DATA_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "board.json");
+const DEFAULT_DATA_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "board.json");
+const DATA_PATH = process.env.DATA_PATH || DEFAULT_DATA_PATH;
 
 let saveTimer = null;
 

@@ -16,7 +16,7 @@
         <input
           v-model="draftTitle"
           class="min-w-0 flex-1 bg-transparent text-sm font-semibold text-zinc-100 outline-none"
-          @focus="setEditing(true)"
+          @focus="onFocus"
           @blur="onBlur"
           @input="onEdit"
         />
@@ -50,7 +50,7 @@
       <textarea
         v-model="draftContent"
         class="min-h-20 w-full resize-none bg-transparent text-sm text-zinc-200 outline-none"
-        @focus="setEditing(true)"
+        @focus="onFocus"
         @blur="onBlur"
         @input="onEdit"
       ></textarea>
@@ -101,10 +101,15 @@ const draftTitle = ref("");
 const draftContent = ref("");
 const commentText = ref("");
 
+const isEditingLocal = ref(false);
+let lastLocalInputAt = 0;
+
 watch(
   note,
   (n) => {
     if (!n) return;
+    if (isEditingLocal.value && n.editingBy === session.userName) return;
+    if (isEditingLocal.value && (n.timestamp ?? 0) < lastLocalInputAt) return;
     draftTitle.value = n.title;
     draftContent.value = n.content;
   },
@@ -156,6 +161,7 @@ let editTimer: number | null = null;
 function onEdit() {
   const n = note.value;
   if (!n) return;
+  lastLocalInputAt = now();
   if (editTimer) window.clearTimeout(editTimer);
   editTimer = window.setTimeout(() => {
     realtimeApi.updateNote({
@@ -169,6 +175,11 @@ function onEdit() {
   }, 250);
 }
 
+function onFocus() {
+  isEditingLocal.value = true;
+  setEditing(true);
+}
+
 function setEditing(v: boolean) {
   const n = note.value;
   if (!n) return;
@@ -179,6 +190,19 @@ function setEditing(v: boolean) {
 function onBlur() {
   const n = note.value;
   if (!n) return;
+  if (editTimer) {
+    window.clearTimeout(editTimer);
+    editTimer = null;
+    realtimeApi.updateNote({
+      id: n.id,
+      title: draftTitle.value,
+      content: draftContent.value,
+      timestamp: now(),
+      editingBy: session.userName,
+      editingAt: now()
+    });
+  }
+  isEditingLocal.value = false;
   realtimeApi.updateNote({ id: n.id, editingBy: "", editingAt: 0, timestamp: now() });
 }
 

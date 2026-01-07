@@ -2,6 +2,8 @@
 
 Aplicación full-stack de pizarra colaborativa en tiempo real.
 
+Aplicacion desplegada en: https://realtime-collaboration-board.fly.dev/
+
 - Frontend: Vue 3 + Vite + Pinia
 - Backend: Node.js (Express) + Socket.IO
 
